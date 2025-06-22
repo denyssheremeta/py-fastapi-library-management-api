@@ -18,6 +18,13 @@ def get_db():
         db.close()
 
 
+@app.get("/authors/{author_id}", response_model=Author)
+def read_author(author_id: int, db: Session = Depends(get_db)):
+    db_author = crud.get_author(db, author_id)
+    if not db_author:
+        raise HTTPException(status_code=404, detail="Author not found")
+    return db_author
+
 @app.post("/authors/", response_model=Author)
 def create_author(author: AuthorCreate, db: Session = Depends(get_db)):
     return crud.create_author(db, author)
